@@ -65,5 +65,26 @@ function adim(array $s, string $a): array {
         return $s;
     }
 
+    if (preg_match('/^T-([a-z]+)-(\d+)$/', $a, $eslesme) === 1) {
+        $u = $eslesme[1];
+        $adet = (int)$eslesme[2];
+
+        if (!isset($s['urunler'][$u]) || $adet <= 0) {
+            return $s;
+        }
+
+        $birim = $s['urunler'][$u]['fiyat'] * 2;
+        if ($adet >= 5) {
+            $birim = intdiv($birim * 80, 100);
+        }
+
+        $alinan = $birim > 0 ? min($adet, max(0, intdiv($s['kasa'], $birim))) : 0;
+        $s['urunler'][$u]['stok'] += $alinan;
+        $s['kasa'] -= $alinan * $birim;
+        $s['log'][] = "🚚 {$s['urunler'][$u]['ad']} tedarik: {$alinan} adet";
+
+        return $s;
+    }
+
     return $s;
 }
