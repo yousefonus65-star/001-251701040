@@ -19,13 +19,23 @@ function adim(array $s, string $a): array {
         $u = $m['urun'];
         $urunAd = $s['urunler'][$u]['ad'];
 
-        if ($s['urunler'][$u]['stok'] > 0) {
+        if ($s['urunler'][$u]['stok'] <= 0) {
+            $s['memnuniyet'] = max(0, $s['memnuniyet'] - 5);
+            $s['seri'] = 0;
+            $s['gunluk_ret']++;
+            $s['log'][] = "👤 {$m['ad']} ({$m['tip']}, bütçe {$m['butce']} TL) {$urunAd} istiyor → Satış yok";
+        } else {
             $tutar = $s['urunler'][$u]['fiyat'];
             if ($m['tip'] === 'Öğrenci' || $m['tip'] === 'Burslu Öğrenci') {
                 $tutar = intdiv($tutar * 90, 100);
             }
 
-            if ($m['butce'] >= $tutar) {
+            if ($m['butce'] < $tutar) {
+                $s['memnuniyet'] = max(0, $s['memnuniyet'] - 2);
+                $s['seri'] = 0;
+                $s['gunluk_ret']++;
+                $s['log'][] = "👤 {$m['ad']} ({$m['tip']}, bütçe {$m['butce']} TL) {$urunAd} istiyor → Satış yok";
+            } else {
                 $s['urunler'][$u]['stok'] -= 1;
                 $s['kasa'] += $tutar;
                 $s['memnuniyet'] = min(100, $s['memnuniyet'] + 1);
