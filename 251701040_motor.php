@@ -80,6 +80,22 @@ function adim(array $s, string $a): array {
         } elseif ($ev === 'yogunluk') {
             $s['yogunluk'] = true;
             $s['log'][] = '👥 Öğle yoğunluğu';
+        } elseif ($ev === 'tedarik') {
+            $enCokUrun = null;
+            $enCokStok = -1;
+            foreach ($s['urunler'] as $anahtar => $bilgi) {
+                if ($bilgi['stok'] > $enCokStok) {
+                    $enCokStok = $bilgi['stok'];
+                    $enCokUrun = $anahtar;
+                }
+            }
+            if ($enCokUrun !== null) {
+                $s['urunler'][$enCokUrun]['stok'] = max(0, $s['urunler'][$enCokUrun]['stok'] - 2);
+            }
+            $s['log'][] = '📦 Tedarik sorunu';
+        } elseif ($ev === 'bahsis') {
+            $s['kasa'] += ($s['memnuniyet'] >= 80) ? 20 : 5;
+            $s['log'][] = '😊 Memnun müşteri';
         }
 
         return $s;
