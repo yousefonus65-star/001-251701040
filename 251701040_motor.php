@@ -101,6 +101,31 @@ function adim(array $s, string $a): array {
         return $s;
     }
 
+    if ($a === 'G') {
+        if ($s['gunluk_musteri'] < 5) {
+            return $s;
+        }
+
+        $kapananGun = $s['gun'];
+        $s['kasa'] -= 50 + 10 * $s['gun'];
+
+        $s['urunler']['tost']['stok'] -= intdiv($s['urunler']['tost']['stok'], 2);
+        $s['urunler']['hamburger']['stok'] -= intdiv($s['urunler']['hamburger']['stok'], 2);
+
+        $s['gunluk_musteri'] = 0;
+        $s['gunluk_ret'] = 0;
+        $s['seri'] = 0;
+        $s['elektrik'] = 0;
+        $s['yogunluk'] = false;
+        $s['log'][] = "🌙 Gün {$kapananGun} kapandı";
+
+        if ($s['gun'] < 5) {
+            $s['gun']++;
+        }
+
+        return $s;
+    }
+
     if (preg_match('/^T-([a-z]+)-(\d+)$/', $a, $eslesme) === 1) {
         $u = $eslesme[1];
         $adet = (int)$eslesme[2];
