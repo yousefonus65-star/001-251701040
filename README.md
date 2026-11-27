@@ -7,6 +7,7 @@
 - Yardım aldım mı? (Yok / Arkadaş / Yapay zekâ / İnternet): asistanım (carbon)
 ## Kuralları nasıl buldum? (2-3 cümle yeter)
 olabilecek tüm olasılıkları asistanım carbona hesaplattırdım ve sonucunda çıkan çıktıları alıp değerlendirdim
+Ve bazen rastgele olaylar tetiklendiğinide keşfettim sonra tek tek her senaryoyu carbona denettirdim ve aradığım sonucu elde ettim
 
 ## En çok zorlandığım kural
 müşteride sonra denk gelinecek olaylar
