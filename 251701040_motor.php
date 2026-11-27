@@ -21,6 +21,10 @@ function adim(array $s, string $a): array {
 
         if ($s['urunler'][$u]['stok'] > 0) {
             $tutar = $s['urunler'][$u]['fiyat'];
+            if ($m['tip'] === 'Öğrenci' || $m['tip'] === 'Burslu Öğrenci') {
+                $tutar = intdiv($tutar * 90, 100);
+            }
+
             if ($m['butce'] >= $tutar) {
                 $s['urunler'][$u]['stok'] -= 1;
                 $s['kasa'] += $tutar;
