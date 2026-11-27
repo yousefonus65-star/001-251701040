@@ -34,6 +34,13 @@ function adim(array $s, string $a): array {
                 $s['memnuniyet'] = max(0, $s['memnuniyet'] - 2);
                 $s['seri'] = 0;
                 $s['gunluk_ret']++;
+                $s['ret_sayac'][$u]++;
+
+                if ($s['ret_sayac'][$u] >= 2) {
+                    $s['urunler'][$u]['fiyat'] -= intdiv($s['urunler'][$u]['fiyat'], 10);
+                    $s['ret_sayac'][$u] = 0;
+                }
+
                 $s['log'][] = "👤 {$m['ad']} ({$m['tip']}, bütçe {$m['butce']} TL) {$urunAd} istiyor → Satış yok";
             } else {
                 $s['urunler'][$u]['stok'] -= 1;
