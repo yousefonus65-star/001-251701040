@@ -98,6 +98,11 @@ function adim(array $s, string $a): array {
             $s['log'][] = '😊 Memnun müşteri';
         }
 
+        if ($s['memnuniyet'] <= 0) {
+            $s['bitti'] = true;
+            $s['kazandi'] = false;
+        }
+
         return $s;
     }
 
@@ -109,6 +114,12 @@ function adim(array $s, string $a): array {
         $kapananGun = $s['gun'];
         $s['kasa'] -= 50 + 10 * $s['gun'];
 
+        if ($s['gunluk_ret'] === 0) {
+            $s['memnuniyet'] = min(100, $s['memnuniyet'] + 3);
+        } elseif ($s['gunluk_ret'] >= 2) {
+            $s['memnuniyet'] = max(0, $s['memnuniyet'] - 5);
+        }
+
         $s['urunler']['tost']['stok'] -= intdiv($s['urunler']['tost']['stok'], 2);
         $s['urunler']['hamburger']['stok'] -= intdiv($s['urunler']['hamburger']['stok'], 2);
 
@@ -119,7 +130,13 @@ function adim(array $s, string $a): array {
         $s['yogunluk'] = false;
         $s['log'][] = "🌙 Gün {$kapananGun} kapandı";
 
-        if ($s['gun'] < 5) {
+        if ($s['kasa'] < 0 || $s['memnuniyet'] <= 0) {
+            $s['bitti'] = true;
+            $s['kazandi'] = false;
+        } elseif ($s['gun'] >= 5) {
+            $s['bitti'] = true;
+            $s['kazandi'] = ($s['kasa'] >= 1000 && $s['memnuniyet'] >= 60);
+        } else {
             $s['gun']++;
         }
 
