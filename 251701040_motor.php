@@ -19,13 +19,24 @@ function adim(array $s, string $a): array {
         $u = $m['urun'];
         $urunAd = $s['urunler'][$u]['ad'];
 
-        if ($s['urunler'][$u]['stok'] <= 0) {
+        $istenen = $s['yogunluk'] ? 2 : 1;
+        $s['yogunluk'] = false;
+
+        if ($s['elektrik'] > 0) {
+            $s['elektrik']--;
+            $s['memnuniyet'] = max(0, $s['memnuniyet'] - 8);
+            $s['seri'] = 0;
+            $s['gunluk_ret']++;
+            $s['log'][] = "👤 {$m['ad']} ({$m['tip']}, bütçe {$m['butce']} TL) {$urunAd} istiyor → Satış yok";
+        } elseif ($s['urunler'][$u]['stok'] <= 0) {
             $s['memnuniyet'] = max(0, $s['memnuniyet'] - 5);
             $s['seri'] = 0;
             $s['gunluk_ret']++;
             $s['log'][] = "👤 {$m['ad']} ({$m['tip']}, bütçe {$m['butce']} TL) {$urunAd} istiyor → Satış yok";
         } else {
-            $tutar = $s['urunler'][$u]['fiyat'];
+            $adet = min($istenen, $s['urunler'][$u]['stok']);
+            $tutar = $s['urunler'][$u]['fiyat'] * $adet;
+
             if ($m['tip'] === 'Öğrenci' || $m['tip'] === 'Burslu Öğrenci') {
                 $tutar = intdiv($tutar * 90, 100);
             }
@@ -43,7 +54,7 @@ function adim(array $s, string $a): array {
 
                 $s['log'][] = "👤 {$m['ad']} ({$m['tip']}, bütçe {$m['butce']} TL) {$urunAd} istiyor → Satış yok";
             } else {
-                $s['urunler'][$u]['stok'] -= 1;
+                $s['urunler'][$u]['stok'] -= $adet;
                 $s['kasa'] += $tutar;
                 $s['memnuniyet'] = min(100, $s['memnuniyet'] + 1);
                 $s['seri']++;
@@ -58,8 +69,17 @@ function adim(array $s, string $a): array {
                     $s['zam'][$u] = true;
                 }
 
-                $s['log'][] = "👤 {$m['ad']} ({$m['tip']}, bütçe {$m['butce']} TL) {$urunAd} istiyor → Satış: 1 adet";
+                $s['log'][] = "👤 {$m['ad']} ({$m['tip']}, bütçe {$m['butce']} TL) {$urunAd} istiyor → Satış: {$adet} adet";
             }
+        }
+
+        $ev = olay((int)$s['no'], (int)$s['musteri_sira']);
+        if ($ev === 'elektrik') {
+            $s['elektrik'] = 1;
+            $s['log'][] = '⚡ Elektrik kesintisi';
+        } elseif ($ev === 'yogunluk') {
+            $s['yogunluk'] = true;
+            $s['log'][] = '👥 Öğle yoğunluğu';
         }
 
         return $s;
